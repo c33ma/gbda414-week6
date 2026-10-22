@@ -41,10 +41,38 @@ const WAIT_TIME = 1500;
 const PROMPT_TIME = 4000;
 const RESULT_TIME = 2500;
 
+
 const prompts = [
-  { text: "Raise your left hand", action: "leftHandUp" },
-  { text: "Raise your right hand", action: "rightHandUp" },
-  { text: "Raise both hands", action: "bothHandsUp" }
+  {
+    text: "Simon says raise your left hand",
+    action: "leftHandUp",
+    simonSays: true
+  },
+  {
+    text: "Raise your left hand",
+    action: "leftHandUp",
+    simonSays: false
+  },
+  {
+    text: "Simon says raise your right hand",
+    action: "rightHandUp",
+    simonSays: true
+  },
+  {
+    text: "Raise your right hand",
+    action: "rightHandUp",
+    simonSays: false
+  },
+  {
+    text: "Simon says raise both hands",
+    action: "bothHandsUp",
+    simonSays: true
+  },
+  {
+    text: "Raise both hands",
+    action: "bothHandsUp",
+    simonSays: false
+  }
 ];
 
 function preload() {
@@ -245,21 +273,32 @@ function drawTimer() {
   noStroke();
 }
 
+
 function drawFeedback() {
-  // Draw the result panel. Customize the wording and appearance in both branches.
+  // Check whether the player followed the Simon Says rule.
+  let isCorrect = currentPrompt.simonSays === actionDetected;
+
   fill(0, 190);
   rect(20, 20, width - 40, 220, 14);
 
-  if (actionDetected) {
+  if (isCorrect) {
+    // Correct response
     fill(120, 255, 160);
     textAlign(CENTER, TOP);
     textSize(36);
-    text("NICE MOVE!", width / 2, 60);
+    text("NICE MOVE!!", width / 2, 60);
 
     fill(255);
     textSize(16);
-    text("The system recognized the requested pose.", width / 2, 140);
+
+    if (currentPrompt.simonSays) {
+      text("Simon said it, and you did it!", width / 2, 140);
+    } else {
+      text("Nice! You didn't fall for the trick!", width / 2, 140);
+    }
+
   } else {
+    // Incorrect response
     fill(255, 130, 130);
     textAlign(CENTER, TOP);
     textSize(36);
@@ -267,7 +306,12 @@ function drawFeedback() {
 
     fill(255);
     textSize(16);
-    text("The system did not recognize the requested pose.", width / 2, 140);
+
+    if (currentPrompt.simonSays) {
+      text("Simon said it! You needed to move.", width / 2, 140);
+    } else {
+      text("Simon didn't say! You shouldn't move.", width / 2, 140);
+    }
   }
 
   fill(255);
